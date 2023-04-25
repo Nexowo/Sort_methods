@@ -32,9 +32,8 @@ class sort_methods:
     @staticmethod
     def enhanced_bubble_sort(l : list):
         for i in range(len(l)):
-            t = True
+            t = False
             for j in range(len(l)-i-1):
-                t = False
                 if l[j] > l[j+1]:
                     l[j], l[j+1] = l[j+1], l[j]
                     t = True
