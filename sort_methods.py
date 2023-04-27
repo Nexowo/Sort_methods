@@ -56,14 +56,16 @@ class sort_methods:
             return l
         
         pivot = l[-1]
-        sup = inf =[]
+        sup = []
+        inf = []
         for elem in l[:-1]:
             if elem > pivot:
                 sup.append(elem)
             else:
                 inf.append(elem)
         
-        return sort_methods.quick_sort(inf) + [pivot] + sort_methods.quick_sort(sup)
+        l =  sort_methods.quick_sort(inf) + [pivot] + sort_methods.quick_sort(sup)
+        return l
 
     
     @staticmethod
@@ -85,7 +87,8 @@ class sort_methods:
         if len(l)<=10:
             return sort_methods.cyril_bubble_sort(l)
         pivot = l[-1]
-        sup = inf = []
+        sup = []
+        inf = []
         for elem in l[:-1]:
             if elem > pivot:
                 sup.append(elem)
@@ -93,6 +96,7 @@ class sort_methods:
                 inf.append(elem)
         
         return sort_methods.quick_sort_bubble(inf) + [pivot] + sort_methods.quick_sort_bubble(sup)
+    
         
     
     @staticmethod
@@ -142,9 +146,7 @@ class sort_methods:
             newn = 0
             for j in range(start+1,n):
                 if(data[j-1]>data[j]):
-                    s=data[j]
-                    data[j]=data[j-1]
-                    data[j-1]=s
+                    data[j], data[j-1]=data[j-1], data[j]
                     newn=j
             n=newn
         return data
@@ -175,16 +177,14 @@ class sort_methods:
             if i>=j:
                 break
             
-            s=data[i]
-            data[i]=data[j]
-            data[j]=s
+            data[i], data[j]=data[j], data[i]
         
         sort_methods.cyril_quick_sort_bubble(data,start,j)
         sort_methods.cyril_quick_sort_bubble(data,j+1,end)
         return(data)
 
 class sort_benchmark:
-    def __init__(self, methods : list[Callable], max_it : int, shift : int = 100, it : int  = 10) -> None:
+    def __init__(self, methods : list[Callable[...,list]], max_it : int, shift : int = 100, it : int  = 10) -> None:
         self.max = max_it
         self.list = [j for j in range(self.max)]
         self.x  = [j for j in range(1,self.max,shift)]
@@ -193,7 +193,7 @@ class sort_benchmark:
 
     def bench(self, func : Callable, shift : int):
         y = []
-        for i in tqdm(range(2,self.max+1, shift), desc='bench'):
+        for i in tqdm(range(2,self.max+1, shift), desc=func.__name__):
             x = [*self.list[:i]]
             s = time()
             x = func(x)
@@ -201,7 +201,7 @@ class sort_benchmark:
             y.append(e-s)
         return y
     
-    def advanced_bench(self, funcs : Callable, it : int, shift = int):
+    def advanced_bench(self, funcs : list[Callable[...,list]], it : int, shift = int):
         results = {f.__name__ : [] for f in funcs}
         for _ in tqdm(range(it), desc='Number of it'):
             shuffle(self.list)
@@ -221,7 +221,7 @@ class sort_benchmark:
                 new_l[i] += l[j][i]/len(l[0])
         return new_l
     
-    def plot(self, methods : Callable):
+    def plot(self, methods : Callable[..., list]):
         fig, ax = plt.subplots()
         for i, m in enumerate(methods):
             ax.plot(self.x, self.y[i], label = m.__name__.replace('_',' '))
@@ -229,5 +229,5 @@ class sort_benchmark:
         plt.show()
 
 if __name__ == '__main__':
-    sort_benchmark([sort_methods.quick_sort, sort_methods.cyril_quick_sort, sort_methods.cyril_quick_sort_bubble, sort_methods.quick_sort_bubble], 50000, 500, 20)
-    #sort_benchmark([sort_methods.bubble_sort, sort_methods.enhanced_bubble_sort, sort_methods.cyril_bubble_sort], 5000)
+    #sort_benchmark([sort_methods.quick_sort, sort_methods.cyril_quick_sort, sort_methods.cyril_quick_sort_bubble, sort_methods.quick_sort_bubble], 100000, 1000, 100)
+    sort_benchmark([sort_methods.bubble_sort, sort_methods.enhanced_bubble_sort, sort_methods.cyril_bubble_sort], 10000, 1000, 15)
