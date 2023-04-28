@@ -5,8 +5,7 @@ from typing import Callable
 from tqdm import tqdm
 
 class sort_methods:
-    min_merge = 32
-
+    
     @staticmethod
     def merge_sort(l : list):
         if len(l) in (1,0):
