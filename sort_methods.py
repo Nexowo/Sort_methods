@@ -5,6 +5,8 @@ from typing import Callable
 from tqdm import tqdm
 
 class sort_methods:
+    min_merge = 32
+
     @staticmethod
     def merge_sort(l : list):
         if len(l) in (1,0):
@@ -30,6 +32,14 @@ class sort_methods:
 
         return l
     
+    @staticmethod
+    def insertion_sort(l : list):
+        for i in range(1,len(l)+1):
+            j = i
+            while(j>0 and l[j]<l[j-1]):
+                l[j], l[j - 1] = l[j - 1], l[j]
+                j -= 1
+
     @staticmethod
     def enhanced_bubble_sort(l : list):
         for i in range(len(l)):
@@ -182,6 +192,33 @@ class sort_methods:
         sort_methods.cyril_quick_sort_bubble(data,start,j)
         sort_methods.cyril_quick_sort_bubble(data,j+1,end)
         return(data)
+    
+    @staticmethod
+    def __tim_sort_min_run(min : int, n : int):
+        r=0
+        while n >= min:
+            r |= n & 1
+            n >>= 1
+        return n + r
+
+    @staticmethod
+    def tim_sort(l : list)->list:
+        n = len(l)
+        m = sort_methods.__tim_sort_min_run(32, n)
+
+        for s in range(0, n, m):
+            e = min(s+m-1, n-1)
+            l[s:e] = sort_methods.insertion_sort(l[s:e])
+
+        while m < len(l):
+            for i in range(0, n, 2*m):
+                mid = min(n - 1, i + m - 1)
+                right = min(i + 2 * m, n)
+                if mid < right:
+                    l[i:right] = sort_methods.merge_sort(l[i:right])
+            m*=2
+        
+        return l
 
 class sort_benchmark:
     def __init__(self, methods : list[Callable[...,list]], max_it : int, shift : int = 100, it : int  = 10) -> None:
@@ -228,6 +265,11 @@ class sort_benchmark:
             ax.legend()
         plt.show()
 
+def test_sort(method : Callable, n : int):
+    l = [i for i in range(n)]
+    shuffle(l)
+    print(method(l))
+
 if __name__ == '__main__':
-    #sort_benchmark([sort_methods.quick_sort, sort_methods.cyril_quick_sort, sort_methods.cyril_quick_sort_bubble, sort_methods.quick_sort_bubble], 100000, 1000, 100)
-    sort_benchmark([sort_methods.bubble_sort, sort_methods.enhanced_bubble_sort, sort_methods.cyril_bubble_sort], 10000, 1000, 15)
+    sort_benchmark([sort_methods.tim_sort, sort_methods.quick_sort, sort_methods.cyril_quick_sort_bubble], 100000, 1000, 50)
+    #sort_benchmark([sort_methods.bubble_sort, sort_methods.enhanced_bubble_sort, sort_methods.cyril_bubble_sort], 10000, 1000, 15)
