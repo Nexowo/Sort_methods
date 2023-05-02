@@ -1,5 +1,6 @@
 from random import shuffle
 from typing import Callable
+from datastructures import *
 
 def merge_sort(l : list):
     if len(l) in (1,0):
@@ -181,7 +182,6 @@ def __tim_sort_min_run(min : int, n : int):
         n >>= 1
     return n + r
 
-@staticmethod
 def tim_sort(l : list)->list:
     n = len(l)
     m = __tim_sort_min_run(32, n)
@@ -200,10 +200,17 @@ def tim_sort(l : list)->list:
     
     return l
 
+def tree_sort(l : list)->list:
+    t = Binary_sort_node(l[0])
+    for e in l[1:]:
+        t.add_value(e)
+    l=t.get_sorted()
+    return l
+
 def test_sort(method : Callable, n : int):
     l = [i for i in range(n)]
     shuffle(l)
     print(method(l))
 
 if __name__ == '__main__':
-    test_sort(tim_sort, 10000)
+    test_sort(tree_sort, 10000)
