@@ -83,7 +83,7 @@ def quick_sort_bubble(l : list):
     if len(l) in (1,0):
         return l
     if len(l)<=10:
-        return bubble_sort(l)
+        return cyril_bubble_sort(l)
     pivot = l[-1]
     sup = []
     inf = []
@@ -93,7 +93,8 @@ def quick_sort_bubble(l : list):
         else:
             inf.append(elem)
     
-    return quick_sort_bubble(inf) + [pivot] + quick_sort_bubble(sup)
+    l = quick_sort_bubble(inf) + [pivot] + quick_sort_bubble(sup)
+    return l
     
 def cyril_quick_sort(data : list, start : int = 0, end : int|None = None):
     if end == None:
@@ -110,18 +111,13 @@ def cyril_quick_sort(data : list, start : int = 0, end : int|None = None):
     data[p] = s
     for i in range(start,end):
         if(data[i]<= data[end]):
-            s=data[i]
-            data[i] = data[j]
-            data[j] = s
+            data[j], data[i] =data[i], data[j]
             j+=1
-    p=j
-        
-    s = data[end]
-    data[end]=data[p]
-    data[p] = s
+            
+    data[end], data[j] = data[j], data[end]
     
-    cyril_quick_sort(data,start,p-1)
-    cyril_quick_sort(data,p+1,end)
+    cyril_quick_sort(data,start,j-1)
+    cyril_quick_sort(data,j+1,end)
     return(data)
 
 def insertion_sort(l : list):
