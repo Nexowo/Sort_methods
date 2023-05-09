@@ -83,7 +83,7 @@ def quick_sort_bubble(l : list):
     if len(l) in (1,0):
         return l
     if len(l)<=10:
-        return cyril_bubble_sort(l)
+        return bubble_sort(l)
     pivot = l[-1]
     sup = []
     inf = []
